@@ -4,8 +4,7 @@ public class Calculate {
     public Calculate(){
     }
 
-    private String calMonthlyPayment(float totalCost, float downPayment, float annualRate, byte periodYears){
-        String mortgageVal = "";
+    public String calMonthlyPayment(float totalCost, float downPayment, float annualRate, int periodYears){
         final byte MONTHS_PER_YEAR = 12;
         final byte PERCENT_TOTAL = 100;
 
@@ -17,8 +16,7 @@ public class Calculate {
         double mortgage = principle*((r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1));
 
         String mortgageFormatted = NumberFormat.getCurrencyInstance().format(mortgage);
-        System.out.print("Mortgage: "+mortgageFormatted);
-        return mortgageVal;
+        return mortgageFormatted;
     }
 
     private String calEarlyMonthlyPayment() {
