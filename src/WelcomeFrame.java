@@ -2,15 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
-public class WelcomeFrame extends JFrame{
+public class WelcomeFrame{
+
+    private float totalPrice = 0;
+    private float downPay = 0;
+    private float rateVal = 0;
+    private int periodVal = 0;
+    private JTextField[] a = new JTextField[5];
+    private byte count = 0;
+
     public WelcomeFrame(){
         JFrame frame = new JFrame();
         frame.setSize(700, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JTabbedPane jTab = new JTabbedPane();
-
 
         jTab.add("Calculate Monthly Payment", firstTab());
         jTab.add("Early Payment Calculations", secondTab());
@@ -20,58 +26,40 @@ public class WelcomeFrame extends JFrame{
     }
 
     private JPanel firstTab(){
-        JPanel panelBuy = new JPanel();
-        JLabel buyingPriceLabel = new JLabel("Buying Price: $");
-        JTextField bArea = new JTextField("Enter Buying Price Here");
-        bArea.addMouseListener(new MouseAdapter() {
+        JPanel panelBuy = this.customPanel1("Buying Price: $", "Enter Buying Price Here");
+        a[0].addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                bArea.setText("");
+                a[0].setText("");
             }
         });
-        panelBuy.add(buyingPriceLabel);
-        panelBuy.add(bArea);
 
-
-        JPanel panelDownPay = new JPanel();
-        JLabel downPaymentLabel = new JLabel("Down Payment: $");
-        JTextField dArea = new JTextField("Enter Down Payment Here");
-        dArea.addMouseListener(new MouseAdapter() {
+        JPanel panelDownPay = this.customPanel1("Down Payment: $", "Enter Down Payment Here");
+        a[1].addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                dArea.setText("");
+                a[1].setText("");
             }
         });
-        panelDownPay.add(downPaymentLabel);
-        panelDownPay.add(dArea);
 
-
-        JPanel panelInt = new JPanel();
-        JLabel interestRate = new JLabel("Interest Rate in Percent:");
-        JTextField iArea = new JTextField("Enter Interest Rate in Percent Here");
-        iArea.addMouseListener(new MouseAdapter() {
+        JPanel panelInt = this.customPanel1("Interest Rate in Percent:", "Enter Interest Rate in Percent Here");
+        a[2].addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                iArea.setText("");
+                a[2].setText("");
             }
         });
         JLabel percent = new JLabel("%");
-        panelInt.add(interestRate);
-        panelInt.add(iArea);
         panelInt.add(percent);
 
-        JPanel panelPer = new JPanel();
-        JLabel period = new JLabel("Period in Years:");
-        JTextField pArea = new JTextField("Enter Period in Years Here");
-        pArea.addMouseListener(new MouseAdapter() {
+        JPanel panelPer = this.customPanel1("Period in Years:", "Enter Period in Years Here");
+        a[3].addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                pArea.setText("");
+                a[3].setText("");
             }
         });
         JLabel years = new JLabel("Years");
-        panelPer.add(period);
-        panelPer.add(pArea);
         panelPer.add(years);
 
         JPanel panelResult1 = new JPanel();
@@ -82,9 +70,13 @@ public class WelcomeFrame extends JFrame{
         calc.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                totalPrice = Float.parseFloat(a[0].getText());
+                downPay = Float.parseFloat(a[1].getText());
+                rateVal = Float.parseFloat(a[2].getText());
+                periodVal = Integer.parseInt(a[3].getText());
+
                 Calculate calcPayment = new Calculate();
-                String val = calcPayment.calMonthlyPayment(Float.parseFloat(bArea.getText()), Float.parseFloat(dArea.getText()),
-                        Float.parseFloat(iArea.getText()), Integer.parseInt(pArea.getText()));
+                String val = calcPayment.calMonthlyPayment(totalPrice, downPay, rateVal, periodVal);
                 result1.setText("Monthly Payments: " + val);
                 result1.setVisible(true);
             }
@@ -105,25 +97,31 @@ public class WelcomeFrame extends JFrame{
     }
 
     private JPanel secondTab(){
-        JPanel periodPanel = new JPanel();
-        JLabel period = new JLabel("Period in Years:");
-        JTextField periodArea = new JTextField("Enter Period in Years Here You Wish to Payoff the Loan by");
-        periodArea.addMouseListener(new MouseAdapter() {
+        JPanel periodPanel = this.customPanel1("Period in Years:", "Enter Period in Years Here You Wish to Payoff the Loan by");
+        a[4].addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                periodArea.setText("");
+                a[4].setText("");
             }
         });
         JLabel yearsLabel = new JLabel("Years");
-        periodPanel.add(period);
-        periodPanel.add(periodArea);
         periodPanel.add(yearsLabel);
 
         JPanel panelResult = new JPanel();
         panelResult.setLayout(new GridLayout(2,1));
         JLabel result = new JLabel("Monthly Payments: $" + " Compared to $");
+
         result.setVisible(false);
         JButton calc = new JButton("Calculate");
+        calc.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Calculate calcPayment = new Calculate();
+                String val = calcPayment.calMonthlyPayment(totalPrice, downPay, rateVal, Integer.parseInt(a[4].getText()));
+                result.setText("Monthly Payments: " + val);
+                result.setVisible(true);
+            }
+        });
         panelResult.add(calc);
         panelResult.add(result);
 
@@ -133,8 +131,16 @@ public class WelcomeFrame extends JFrame{
         panel.add(new JLabel("Calculates Monthly Payment Based on Desired Payment Period."));
         panel.add(periodPanel);
         panel.add(panelResult);
-
         return panel;
     }
 
+    private JPanel customPanel1(String labelText, String fieldText){
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel(labelText);
+        a[count] = new JTextField(fieldText);
+        panel.add(label);
+        panel.add(a[count]);
+        count++;
+        return panel;
+    }
 }
